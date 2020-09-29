@@ -1,0 +1,27 @@
+{
+    "name": "nnn-logging",
+    "version": "0.0.1",
+    "description": "gelf logging for nnn.roncli.com.",
+    "homepage": "https://github.com/roncli/nnn",
+    "bugs": {
+        "url": "https://github.com/roncli/nnn/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/roncli/nnn"
+    },
+    "main": "index.js",
+    "author": {
+        "name": "Ronald M. Clifford",
+        "email": "roncli@roncli.com",
+        "url": "http://roncli.com"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "applicationinsights": "1.8.7",
+        "graygelf": "2.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "14.11.2"
+    }
+}

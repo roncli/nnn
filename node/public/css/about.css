@@ -1,0 +1,40 @@
+#commands {
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(3, auto);
+    padding-top: 10px;
+}
+
+#commands .header {
+    font-size: 18px;
+    color: #246598;
+}
+
+#commands .section {
+    grid-column-end: span 3;
+    font-size: 18px;
+    color: white;
+}
+
+#commands .command, #commands .example {
+    font-family: monospace;
+    background-color: #333333;
+}
+
+@media (max-width: 1000px) {
+    #commands {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 800px) {
+    #commands {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 600px) {
+    #commands {
+        font-size: 11px;
+    }
+}

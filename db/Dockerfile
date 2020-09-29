@@ -1,0 +1,18 @@
+# Get mongo latest.
+FROM mongo:latest
+
+# Create /docker-entrypoint-initdb.d directory.
+RUN mkdir -p /docker-entrypoint-initdb.d
+
+# Create /var/mongo directory.
+RUN mkdir -p /var/mongo
+
+# Copy files.
+COPY ./init/* /docker-entrypoint-initdb.d/
+COPY ./mongo/* /var/mongo/
+
+# Allow start script to run.
+RUN chmod +x /docker-entrypoint-initdb.d/*.sh
+
+# Expose port 27017.
+EXPOSE 27017

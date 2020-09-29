@@ -1,0 +1,61 @@
+#player {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    align-items: start;
+}
+
+#player .name {
+    color: #246598;
+    font-size: 12px;
+    font-weight: bold;
+    filter: url(#noita-blue);
+    zoom: 3;
+    grid-row: 1;
+    grid-column: 1;
+}
+
+#player .section {
+    padding: 0;
+}
+
+#career-stats {
+    display: grid;
+    grid-template-columns: repeat(10, max-content);
+    grid-column-gap: 20px;
+}
+
+#performance-stats {
+    display: grid;
+    grid-template-columns: repeat(8, max-content);
+    grid-column-gap: 20px;
+}
+
+#games-stats {
+    display: grid;
+    grid-template-columns: repeat(9, max-content);
+    grid-column-gap: 20px;
+}
+
+#games-stats .won {
+    display: inline-block;
+    width: 15px;
+    height: 16px;
+    background: url("/images/won.png") 15px 16px;
+    image-rendering: pixelated;
+}
+
+#games-stats .completed {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: url("/images/completed.png") 16px 16px;
+    image-rendering: pixelated;
+}
+
+.span-2 {
+    grid-column-end: span 2;
+}
+
+.subsection {
+    margin-bottom: 20px;
+}

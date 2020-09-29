@@ -1,0 +1,215 @@
+body {
+    background-color: #654970;
+    color: white;
+}
+
+a {
+    color: #654970;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#page {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: black;
+}
+
+#menu a {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#menu a:hover {
+    text-decoration: none;
+}
+
+#menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#menu li {
+    display: inline-block;
+    padding: 5px 15px;
+}
+
+#menu li:hover {
+    background-color: #333333;
+}
+
+#header {
+    display: grid;
+    grid-template-columns: 296px auto;
+    align-items: center;
+    background-position: center;
+    background-color: #404040;
+    background-image: url("/images/background.png");
+    background-size: 1200px 296px;
+}
+
+#header #logo {
+    margin: 20px;
+    width: 256px;
+    height: 256px;
+    background-image: url("/images/nnn-transparent.png");
+    background-size: 256px 256px;
+}
+
+#header #title {
+    width: 660px;
+    height: 96px;
+    background-image: url("/images/title.png");
+    background-size: 660px 96px;
+}
+
+#page-body {
+    margin: 20px;
+}
+
+#discord {
+    display: grid;
+    grid-template-columns: auto 396px;
+}
+
+#discord .title {
+    color: #246598;
+    font-size: 24px;
+    font-weight: bold;
+    grid-column: 1 / span 2;
+    grid-row: 1;
+}
+
+#discord .text {
+    font-size: 14px;
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 10px;
+}
+
+#discord .link {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+}
+
+@media only screen and (max-width: 900px) {
+    #discord {
+        grid-template-columns: repeat(1, auto);
+    }
+
+    #discord .title {
+        grid-column: 1;
+    }
+
+    #discord .link {
+        padding-top: 20px;
+        grid-column: 1;
+        grid-row: 3;
+    }
+}
+
+#copyright {
+    padding-top: 10px;
+    background-color: #654970;
+}
+
+#copyright .left {
+    float: left;
+}
+
+#copyright .right {
+    float: right;
+}
+
+#copyright a {
+    color: white;
+    text-decoration: underline;
+}
+
+.font-pixel-huge {
+    image-rendering: pixelated;
+}
+
+.section {
+    color: #246598;
+    font-size: 12px;
+    font-weight: bold;
+    filter: url(#noita-blue);
+    zoom: 2;
+    padding: 10px 0;
+}
+
+.subsection {
+    margin-top: -20px;
+    font-size: 12px;
+}
+
+.header {
+    color: #246598;
+    filter: url(#noita-blue);
+    font-weight: bold;
+}
+
+.center-align {
+    text-align: center;
+}
+
+.right-align {
+    text-align: right;
+}
+
+.paginator {
+    display: flex;
+    flex-wrap: wrap;
+    border-collapse: collapse;
+    color: #fff;
+    margin: 10 0px;    
+}
+
+.paginator .paginator-text,
+.paginator .paginator-page {
+    display: flex;
+    width: 40px;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.paginator .paginator-text {
+    width: 80px;
+    justify-content: left;
+}
+
+.paginator .paginator-page {
+    cursor: pointer;
+}
+
+.paginator .paginator-page:hover {
+    color: #246598;
+    filter: url(#noita-blue);
+}
+
+.paginator .paginator-page.active:hover {
+    color: white;
+    filter: none;
+}
+
+.paginator .paginator-page.active {
+    background-color: #246598;
+    font-weight: bold;
+}
+
+.paginator .paginator-page.active:hover {
+    color: white;
+}
+
+a {
+    font-weight: bold;
+}

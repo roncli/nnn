@@ -1,0 +1,56 @@
+const Challenge = require("../../src/models/challenge");
+
+/**
+ * @typedef {import("express").Request} Express.Request
+ * @typedef {import("express").Response} Express.Response
+ */
+
+//  #   #          #            #        #             #
+//  #   #          #            #       # #
+//  ## ##   ###   ####    ###   # ##   #   #  # ##    ##
+//  # # #      #   #     #   #  ##  #  #   #  ##  #    #
+//  #   #   ####   #     #      #   #  #####  ##  #    #
+//  #   #  #   #   #  #  #   #  #   #  #   #  # ##     #
+//  #   #   ####    ##    ###   #   #  #   #  #       ###
+//                                            #
+//                                            #
+/**
+ * A class that represents the Match API.
+ */
+class MatchApi {
+    //              #
+    //              #
+    //  ###   ##   ###
+    // #  #  # ##   #
+    //  ##   ##     #
+    // #      ##     ##
+    //  ###
+    /**
+     * Processes the request.
+     * @param {Express.Request} req The request.
+     * @param {Express.Response} res The response.
+     * @returns {Promise} A promise that resolves when the request is complete.
+     */
+    static async get(req, res) {
+        const querySeason = req.query.season && req.query.season.toString() || void 0,
+            season = Number.parseInt(querySeason, 10) || void 0,
+            queryPage = req.query.page && req.query.page.toString() || void 0,
+            page = Number.parseInt(queryPage, 10) || void 0;
+
+        if (!season) {
+            return res.status(400).json({error: "Invalid season."});
+        }
+
+        if (!page) {
+            return res.status(400).json({error: "Invalid season."});
+        }
+
+        return res.json(await (await Challenge.getMatchesBySeason(season, page)).map((m) => ({match: m})));
+    }
+}
+
+MatchApi.route = {
+    path: "/api/match"
+};
+
+module.exports = MatchApi;

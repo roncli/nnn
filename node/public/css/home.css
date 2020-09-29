@@ -1,0 +1,10 @@
+#home #standings {
+    display: grid;
+    grid-template-columns: repeat(9, max-content);
+    grid-column-gap: 30px;
+    justify-content: center;
+}
+
+#home #standings .avg-stats {
+    grid-column-end: span 2;
+}

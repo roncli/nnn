@@ -1,0 +1,57 @@
+#completed-matches, #upcoming-matches {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+}
+
+.match {
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    grid-column-gap: 15px;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.match div {
+    align-self: center;
+}
+
+.match .player {
+    zoom: 2;
+}
+
+.match .player div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.match .player .won {
+    width: 15px;
+    height: 16px;
+    background: url("/images/won.png") 15px 16px;
+    image-rendering: pixelated;
+}
+
+.match .player .completed {
+    width: 16px;
+    height: 16px;
+    background: url("/images/completed.png") 16px 16px;
+    image-rendering: pixelated;
+}
+
+.match .player .name {
+    margin-bottom: 2px;
+    border-bottom: solid 1px black;
+}
+
+.match .player .name > div {
+    filter: url(#noita-purple);
+}
+
+.match .player a:hover .name {
+    border-bottom: solid 1px #654970;
+}
+
+.match .match-time {
+    grid-column-end: span 3;
+}
