@@ -39,6 +39,8 @@ services:
       - WEB_NNN_PASSWORD_FILE
     restart: always
     privileged: true
+    volumes:
+      - db-data:/data/db:rw
 
   redis:
     container_name: nnn-redis
@@ -153,6 +155,7 @@ networks:
 volumes:
   certbot-conf:
   certbot-work:
+  db-data:
   nginx-work:
 
 secrets:
