@@ -69,10 +69,9 @@ services:
     build: ./node
     depends_on:
       - logging
+      - db
     networks:
       - nnn-network
-    ports:
-      - "3030:3030"
     logging:
       driver: "gelf"
       options:
@@ -108,8 +107,8 @@ services:
     container_name: nnn-nginx
     build: ./nginx
     depends_on:
-      - node
       - logging
+      - node
     networks:
       - nnn-network
     ports:
@@ -133,8 +132,8 @@ services:
     container_name: nnn-certbot
     build: ./certbot
     depends_on:
-      - nginx
       - logging
+      - nginx
     logging:
       driver: "gelf"
       options:
