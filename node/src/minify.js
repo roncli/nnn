@@ -182,9 +182,9 @@ class Minify {
         if (+process.env.MINIFY_ENABLED) {
             switch (type) {
                 case "js":
-                    return `<script src="/js?files=${files.join(",")}"></script>`;
+                    return `<script src="/js/?files=${files.join(",")}"></script>`;
                 case "css":
-                    return `<link rel="stylesheet" href="/css?files=${files.join(",")}" />`;
+                    return `<link rel="stylesheet" href="/css/?files=${files.join(",")}" />`;
                 default:
                     return "";
             }
