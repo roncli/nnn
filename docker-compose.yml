@@ -49,8 +49,6 @@ services:
       - logging
     networks:
       - nnn-network
-    ports:
-      - "6379:6379"
     logging:
       driver: "gelf"
       options:
