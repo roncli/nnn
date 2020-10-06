@@ -53,7 +53,7 @@ class Common {
 
         files.js.unshift("/js/common.js");
         files.js.unshift("/js/fontPixelHuge.js");
-        files.js.unshift("/js/sprintFont.js");
+        files.js.unshift("/js/spriteFont.js");
         files.css.unshift("/css/common.css");
         files.css.unshift("/css/reset.css");
 
