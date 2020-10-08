@@ -38,7 +38,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD_FILE
       - WEB_NNN_PASSWORD_FILE
     restart: always
-    privileged: true
+    entrypoint: /var/mongo/start.sh
     volumes:
       - db-data:/data/db:rw
 

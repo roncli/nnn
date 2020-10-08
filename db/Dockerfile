@@ -8,11 +8,12 @@ RUN mkdir -p /docker-entrypoint-initdb.d
 RUN mkdir -p /var/mongo
 
 # Copy files.
-COPY ./init/* /docker-entrypoint-initdb.d/
-COPY ./mongo/* /var/mongo/
+COPY ./init/ /docker-entrypoint-initdb.d/
+COPY ./mongo/ /var/mongo/
 
-# Allow start script to run.
+# Allow scripts to run.
 RUN chmod +x /docker-entrypoint-initdb.d/*.sh
+RUN chmod +x /var/mongo/*.sh
 
 # Expose port 27017.
 EXPOSE 27017
