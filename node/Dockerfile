@@ -1,9 +1,6 @@
 # Get Node LTS Alpine.
 FROM node:lts-alpine
 
-# Get packages.
-RUN apk update && apk add cifs-utils && apk add keyutils
-
 # Create /var/www directory.
 RUN mkdir -p /var/www
 
