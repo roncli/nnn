@@ -108,7 +108,7 @@ class SeasonDb {
                     K: new MongoDb.Int32(k)
                 };
 
-                Db.id(season, "season");
+                await Db.id(season, "season");
 
                 await db.collection("season").insertOne(season);
             }
