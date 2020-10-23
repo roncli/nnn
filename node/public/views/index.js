@@ -39,7 +39,6 @@ class IndexView {
                     <meta name="og:url" content="${protocol}://${host}${encodeURI(originalUrl)}" />
                     <meta name="twitter:card" content="summary" />
                     <meta name="twitter:creator" content="@roncli" />
-                    ${IndexView.Common.favIcon()}
                     ${head}
                 </head>
                 <body>
@@ -98,10 +97,6 @@ class IndexView {
         `;
     }
 }
-
-/** @type {typeof import("../../web/includes/common")} */
-// @ts-ignore
-IndexView.Common = typeof Common === "undefined" ? require("../../web/includes/common") : Common; // eslint-disable-line no-undef
 
 if (typeof module !== "undefined") {
     module.exports = IndexView; // eslint-disable-line no-undef

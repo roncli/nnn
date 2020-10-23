@@ -57,7 +57,7 @@ class Common {
         files.css.unshift("/css/common.css");
         files.css.unshift("/css/reset.css");
 
-        head = `${head}${Minify.combine(files.js, "js")}${Minify.combine(files.css, "css")}`;
+        head = `${head}${Minify.combine(files.js, "js")}${Minify.combine(files.css, "css")}${Common.favIcon()}`;
 
         return HtmlMinifier.minify(
             IndexView.get({
