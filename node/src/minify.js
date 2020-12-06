@@ -86,7 +86,7 @@ class Minify {
                 Cache.add(key, output.css, new Date(new Date().getTime() + 86400000));
             }
 
-            res.status(200).send(output.css);
+            res.status(200).type("css").send(output.css);
             return void 0;
         } catch (err) {
             return next(err);
@@ -159,7 +159,7 @@ class Minify {
                 Cache.add(key, output.code, new Date(new Date().getTime() + 86400000));
             }
 
-            res.status(200).send(output.code);
+            res.status(200).type("js").send(output.code);
             return void 0;
         } catch (err) {
             return next(err);
