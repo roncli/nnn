@@ -50,7 +50,7 @@ class Minify {
             cache = await Cache.get(key);
 
             if (cache) {
-                res.status(200).send(cache);
+                res.status(200).type("css").send(cache);
                 return void 0;
             }
         }
@@ -119,7 +119,7 @@ class Minify {
             cache = await Cache.get(key);
 
             if (cache) {
-                res.status(200).send(cache);
+                res.status(200).type("js").send(cache);
                 return void 0;
             }
         }
