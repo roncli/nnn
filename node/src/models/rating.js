@@ -9,8 +9,8 @@
 const ChallengeDb = require("../database/challenge"),
     Db = require("../database/rating"),
     Elo = require("../elo"),
-    Exception = require("../logging/exception"),
-    Log = require("../logging/log"),
+    Exception = require("../errors/exception"),
+    Log = require("node-application-insights-logger"),
     SeasonDb = require("../database/season");
 
 /** @type {typeof import("../discord")} */
@@ -70,7 +70,7 @@ class Rating {
         try {
             challenges = await ChallengeDb.getCompletedGamesForSeason(season);
         } catch (err) {
-            Log.exception("There was a database error getting challenges while updating ratings.", err);
+            Log.error("There was a database error getting challenges while updating ratings.", {err});
             return;
         }
 
@@ -79,7 +79,7 @@ class Rating {
         try {
             seasonData = await SeasonDb.get(season);
         } catch (err) {
-            Log.exception("There was a database error getting the season while updating ratings.", err);
+            Log.error("There was a database error getting the season while updating ratings.", {err});
             return;
         }
 
@@ -127,7 +127,7 @@ class Rating {
         try {
             await Db.updateRatingsForSeason(season, ratings, challengeRatings);
         } catch (err) {
-            Log.exception("There was a database error getting the season while updating ratings.", err);
+            Log.error("There was a database error getting the season while updating ratings.", {err});
             return;
         }
 
@@ -136,7 +136,7 @@ class Rating {
         try {
             currentSeason = await SeasonDb.getFromDate(new Date());
         } catch (err) {
-            Log.exception("There was a database error getting the latest season while updating ratings.", err);
+            Log.error("There was a database error getting the latest season while updating ratings.", {err});
             return;
         }
 
@@ -146,7 +146,7 @@ class Rating {
         try {
             top = await Db.getTopPlayers(currentSeason._id);
         } catch (err) {
-            Log.exception("There was a database error getting the top players while updating ratings.", err);
+            Log.error("There was a database error getting the top players while updating ratings.", {err});
             return;
         }
 
@@ -168,7 +168,7 @@ class Rating {
                     await message.pin();
                 }
             } catch (err) {
-                Log.exception("There was a critical Discord error displaying the standings.", err);
+                Log.error("There was a critical Discord error displaying the standings.", {err});
             }
         }
     }

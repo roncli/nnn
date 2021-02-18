@@ -1,5 +1,5 @@
 const Db = require("../database/season"),
-    Exception = require("../logging/exception");
+    Exception = require("../errors/exception");
 
 //   ###
 //  #   #

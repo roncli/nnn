@@ -13,7 +13,7 @@
 
 const Common = require("../../web/includes/common"),
     Db = require("../database/challenge"),
-    Exception = require("../logging/exception"),
+    Exception = require("../errors/exception"),
     Player = require("./player"),
     Rating = require("./rating"),
     SeasonDb = require("../database/season"),

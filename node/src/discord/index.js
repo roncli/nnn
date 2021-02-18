@@ -1,9 +1,10 @@
 const DiscordJs = require("discord.js"),
+    Log = require("node-application-insights-logger"),
+    util = require("util"),
 
     Commands = require("./commands"),
-    Exception = require("../logging/exception"),
-    Log = require("../logging/log"),
-    Warning = require("../logging/warning"),
+    Exception = require("../errors/exception"),
+    Warning = require("../errors/warning"),
 
     commands = new Commands(),
     discord = new DiscordJs.Client({
@@ -96,7 +97,7 @@ class Discord {
      */
     static startup() {
         discord.on("ready", () => {
-            Log.log("Connected to Discord.");
+            Log.verbose("Connected to Discord.");
 
             guild = discord.guilds.cache.find((g) => g.name === process.env.DISCORD_GUILD);
 
@@ -106,7 +107,7 @@ class Discord {
         });
 
         discord.on("disconnect", (ev) => {
-            Log.exception("Disconnected from Discord.", ev);
+            Log.error("Disconnected from Discord.", {err: ev instanceof Error ? ev : new Error(util.inspect(ev))});
         });
 
         discord.on("message", (message) => {
@@ -118,7 +119,7 @@ class Discord {
                 try {
                     await member.setActive(false);
                 } catch (err) {
-                    Log.exception(`There was a problem with ${member.displayName} leaving the server.`, err);
+                    Log.error(`There was a problem with ${member.displayName} leaving the server.`, {err});
                 }
             }
         });
@@ -132,7 +133,7 @@ class Discord {
                 try {
                     await newMember.updateName(oldMember);
                 } catch (err) {
-                    Log.exception(`There was a problem with ${oldMember.displayName} changing their name to ${newMember.displayName}.`, err);
+                    Log.error(`There was a problem with ${oldMember.displayName} changing their name to ${newMember.displayName}.`, {err});
                 }
             }
         });
@@ -144,7 +145,7 @@ class Discord {
                 return;
             }
 
-            Log.exception("Discord error.", err);
+            Log.error("Discord error.", {err});
         });
     }
 
@@ -159,13 +160,13 @@ class Discord {
      * @returns {Promise} A promise that resolves once Discord is connected.
      */
     static async connect() {
-        Log.log("Connecting to Discord...");
+        Log.verbose("Connecting to Discord...");
 
         try {
             await discord.login();
-            Log.log("Connected.");
+            Log.verbose("Connected.");
         } catch (err) {
-            Log.exception("Error connecting to Discord, will automatically retry.", err);
+            Log.error("Error connecting to Discord, will automatically retry.", {err});
         }
     }
 
@@ -212,18 +213,18 @@ class Discord {
                     success = await commands[command](member, channel, args);
                 } catch (err) {
                     if (err instanceof Warning) {
-                        Log.warning(`${channel} ${member}: ${text} - ${err.message || err}`);
+                        Log.warn(`${channel} ${member}: ${text} - ${err.message || err}`);
                     } else if (err instanceof Exception) {
-                        Log.exception(`${channel} ${member}: ${text} - ${err.message}`, err.innerError);
+                        Log.error(`${channel} ${member}: ${text} - ${err.message}`, {err: err.innerError});
                     } else {
-                        Log.exception(`${channel} ${member}: ${text}`, err);
+                        Log.error(`${channel} ${member}: ${text}`, {err});
                     }
 
                     return;
                 }
 
                 if (success) {
-                    Log.log(`${channel} ${member}: ${text}`);
+                    Log.verbose(`${channel} ${member}: ${text}`);
                 }
             }
         }

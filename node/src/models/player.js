@@ -6,7 +6,7 @@
  */
 
 const Db = require("../database/player"),
-    Exception = require("../logging/exception"),
+    Exception = require("../errors/exception"),
     SeasonDb = require("../database/season");
 
 // ###   ##

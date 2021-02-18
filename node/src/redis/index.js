@@ -1,4 +1,4 @@
-const Log = require("../logging/log"),
+const Log = require("node-application-insights-logger"),
     IoRedis = require("ioredis");
 
 //  ####              #    #
@@ -35,7 +35,7 @@ class Redis {
             });
             client = newClient;
         } catch (err) {
-            Log.exception("A Redis error occurred while logging in.", err);
+            Log.error("A Redis error occurred while logging in.", {err});
 
             client.removeAllListeners();
             if (client) {
@@ -47,7 +47,7 @@ class Redis {
         }
 
         client.on("error", async (err) => {
-            Log.exception("A Redis error occurred.", err);
+            Log.error("A Redis error occurred.", {err});
 
             client.removeAllListeners();
             if (client) {

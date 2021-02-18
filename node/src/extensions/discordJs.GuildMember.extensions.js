@@ -2,7 +2,7 @@ const DiscordJs = require("discord.js"),
 
     Challenge = require("../models/challenge"),
     Db = require("../database/player"),
-    Exception = require("../logging/exception");
+    Exception = require("../errors/exception");
 
 /** @type {typeof import("../discord")} */
 let Discord;

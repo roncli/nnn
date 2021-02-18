@@ -13,7 +13,7 @@ const tz = require("timezone-js"),
     Player = require("../models/player"),
     pjson = require("../../package.json"),
     Rating = require("../models/rating"),
-    Warning = require("../logging/warning"),
+    Warning = require("../errors/warning"),
 
     idParse = /^<@!?(?<id>[0-9]+)>$/,
     idMessageParse = /^<@!?(?<id>[0-9]+)> (?<command>[^ ]+)(?: (?<newMessage>.+))?$/,

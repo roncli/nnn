@@ -1,4 +1,4 @@
-const Log = require("../logging/log"),
+const Log = require("node-application-insights-logger"),
     Redis = require("."),
 
     dateMatch = /^(?:\d{4})-(?:\d{2})-(?:\d{2})T(?:\d{2}):(?:\d{2}):(?:\d{2}(?:\.\d*))(?:Z|(?:\+|-)(?:[\d|:]*))?$/;
@@ -47,7 +47,7 @@ class Cache {
 
             client.disconnect();
         } catch (err) {
-            Log.warning(`Redis error on add: ${err.message}`);
+            Log.warn(`Redis error on add: ${err.message}`);
         }
     }
 
@@ -87,7 +87,7 @@ class Cache {
                 return v;
             });
         } catch (err) {
-            Log.warning(`Redis error on get: ${err.message}`);
+            Log.warn(`Redis error on get: ${err.message}`);
             return void 0;
         }
     }
@@ -122,7 +122,7 @@ class Cache {
 
             client.disconnect();
         } catch (err) {
-            Log.warning(`Redis error on invalidate: ${err.message}`);
+            Log.warn(`Redis error on invalidate: ${err.message}`);
         }
     }
 }

@@ -5,12 +5,12 @@
  */
 
 const fs = require("fs"),
+    Log = require("node-application-insights-logger"),
     path = require("path"),
     promisify = require("util").promisify,
 
     express = require("express"),
 
-    Log = require("./logging/log"),
     classes = {};
 
 //  ####                  #
@@ -121,7 +121,7 @@ class Router {
 
                         return await classInfo.class[req.method.toLowerCase()](req, res, next);
                     } catch (err) {
-                        Log.exception(`A web exception occurred in ${req.method.toLowerCase()} ${classInfo.path} from ${req.ip} for ${req.url}.`, err, req);
+                        Log.error(`A web exception occurred in ${req.method.toLowerCase()} ${classInfo.path} from ${req.ip} for ${req.url}.`, {err, req});
                     }
 
                     return classes[path.resolve(`${__dirname}/../web/controllers/500.js`)].class.get(req, res, next);

@@ -1,12 +1,17 @@
 const compression = require("compression"),
     express = require("express"),
-    minify = require("./src/minify"),
+    Log = require("node-application-insights-logger"),
     tz = require("timezone-js"),
     tzdata = require("tzdata"),
+    util = require("util"),
 
     Discord = require("./src/discord"),
-    Log = require("./src/logging/log"),
+    Minify = require("./src/minify"),
     Router = require("./src/router");
+
+process.on("unhandledRejection", (reason) => {
+    Log.error("Unhandled promise rejection caught.", {err: reason instanceof Error ? reason : new Error(util.inspect(reason))});
+});
 
 //         #                 #
 //         #                 #
@@ -19,7 +24,7 @@ const compression = require("compression"),
  * Starts up the application.
  */
 (async function startup() {
-    Log.log("Starting up...");
+    Log.info("Starting up...");
 
     // Set title.
     if (process.platform === "win32") {
@@ -31,13 +36,16 @@ const compression = require("compression"),
     // Setup express app.
     const app = express();
 
+    // Remove powered by.
+    app.disable("x-powered-by");
+
     // Get the router.
     /** @type {express.Router} */
     let router;
     try {
         router = await Router.getRouter();
     } catch (err) {
-        console.log(err);
+        Log.critical("There was an error while setting up the router.", {err});
         return;
     }
 
@@ -65,8 +73,8 @@ const compression = require("compression"),
     });
 
     // Setup JS/CSS handlers.
-    app.get("/css", minify.cssHandler);
-    app.get("/js", minify.jsHandler);
+    app.get("/css", Minify.cssHandler);
+    app.get("/js", Minify.jsHandler);
 
     // 500 is an internal route, 404 it if it's requested directly.
     app.use("/500", (req, res, next) => {
@@ -87,7 +95,7 @@ const compression = require("compression"),
 
     // 500 errors.
     app.use((err, req, res, next) => {
-        Log.exception("Unhandled error has occurred.", err);
+        Log.error("Unhandled error has occurred.", {err});
         req.method = "GET";
         req.url = "/500";
         router(req, res, next);
@@ -97,9 +105,5 @@ const compression = require("compression"),
     const port = process.env.PORT || 3030;
 
     app.listen(port);
-    console.log(`Server PID ${process.pid} listening on port ${port}.`);
+    Log.info(`Server PID ${process.pid} listening on port ${port}.`);
 }());
-
-process.on("unhandledRejection", (reason) => {
-    Log.exception("Unhandled promise rejection caught.", reason);
-});
