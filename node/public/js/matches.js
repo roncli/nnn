@@ -1,5 +1,3 @@
-/* global Common, MatchView, SpriteFont */
-
 //  #   #          #            #
 //  #   #          #            #
 //  ## ##   ###   ####    ###   # ##    ###    ###
@@ -23,14 +21,19 @@ class Matches {
      * @returns {void}
      */
     static fixLengths() {
-        for (const e of document.getElementsByClassName("name")) {
+        /** @type {NodeListOf<HTMLElement>} */
+        const elements = document.querySelectorAll(".name");
+
+        elements.forEach((el) => {
             let zoom = 1;
-            while (e.offsetHeight > 20) {
+            while (el.offsetHeight > 20 && zoom > 0.1) {
                 zoom -= 0.1;
-                e.style.zoom = zoom;
-                e.style["image-rendering"] = "auto";
+                el.style.transform = `scale(${zoom})`;
+                el.style.transformOrigin = "0 0";
+                el.style.width = `${100 / zoom}%`;
+                el.style.imageRendering = "auto";
             }
-        }
+        });
     }
 
     // ###    ##   #  #   ##                #                 #    #                    #           #
@@ -44,11 +47,9 @@ class Matches {
      * @returns {void}
      */
     static DOMContentLoaded() {
-        Matches.page = 1;
-
-        Array.from(document.getElementsByClassName("select-page")).forEach((paginator) => {
-            paginator.addEventListener("click", (ev) => {
-                if (ev.target.classList.contains("active")) {
+        Array.from(document.getElementsByClassName("select-page")).forEach((/** @type {HTMLElement} */ paginator) => {
+            paginator.addEventListener("click", async (ev) => {
+                if (/** @type {HTMLElement} */(ev.target).classList.contains("active")) { // eslint-disable-line no-extra-parens
                     return;
                 }
 
@@ -60,13 +61,20 @@ class Matches {
 
                 Matches.page = +paginator.dataset.page;
 
-                Common.loadDataIntoTemplate(`/api/match?season=${document.getElementById("season").innerText}&page=${Matches.page}`, "#completed-matches", MatchView.get).then(() => {
-                    Common.parseTime();
-                    for (const el of document.querySelectorAll("#completed-matches .font-pixel-huge")) {
-                        new SpriteFont(el, "Font Pixel Huge");
-                    }
-                    Matches.fixLengths();
-                });
+                let data;
+                try {
+                    data = await (await fetch(`/api/match?season=${document.getElementById("season").innerText}&page=${Matches.page}`)).json();
+                } catch (err) {
+                    return;
+                }
+
+                Matches.Template.loadDataIntoTemplate(data, document.querySelector("#completed-matches"), Matches.MatchView.get);
+
+                Matches.Time.parseTime();
+
+                Matches.Font.parseFont();
+
+                Matches.fixLengths();
             });
 
             paginator.addEventListener("selectstart", (ev) => {
@@ -76,7 +84,8 @@ class Matches {
 
         if (document.getElementById("select-prev")) {
             document.getElementById("select-prev").addEventListener("click", () => {
-                const el = document.getElementsByClassName(`select-page-${Matches.page - 1}`)[0];
+                /** @type {HTMLElement} */
+                const el = document.querySelector(`.select-page-${Matches.page - 1}`);
 
                 if (el) {
                     el.click();
@@ -90,7 +99,8 @@ class Matches {
 
         if (document.getElementById("select-next")) {
             document.getElementById("select-next").addEventListener("click", () => {
-                const el = document.getElementsByClassName(`select-page-${Matches.page + 1}`)[0];
+                /** @type {HTMLElement} */
+                const el = document.querySelector(`.select-page-${Matches.page + 1}`);
 
                 if (el) {
                     el.click();
@@ -106,4 +116,27 @@ class Matches {
     }
 }
 
-document.addEventListener("DOMContentLoaded", Matches.DOMContentLoaded);
+/** @type {typeof import("./common/font")} */
+// @ts-ignore
+Matches.Font = typeof Font === "undefined" ? require("./common/font") : Font; // eslint-disable-line no-undef
+
+/** @type {typeof import("../views/matches/match")} */
+// @ts-ignore
+Matches.MatchView = typeof MatchView === "undefined" ? require("../views/matches/match") : MatchView; // eslint-disable-line no-undef
+
+Matches.page = 1;
+
+/** @type {typeof import("./common/template")} */
+// @ts-ignore
+Matches.Template = typeof Template === "undefined" ? require("./common/template") : Template; // eslint-disable-line no-undef
+
+/** @type {typeof import("./common/time")} */
+// @ts-ignore
+Matches.Time = typeof Time === "undefined" ? require("./common/time") : Time; // eslint-disable-line no-undef
+
+if (typeof module === "undefined") {
+    document.addEventListener("DOMContentLoaded", Matches.DOMContentLoaded);
+    window.Matches = Matches;
+} else {
+    module.exports = Matches; // eslint-disable-line no-undef
+}

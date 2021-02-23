@@ -1,8 +1,8 @@
 /**
- * @typedef {import("../../types/playerTypes").Career} PlayerTypes.Career
- * @typedef {import("../../types/playerTypes").Player} PlayerTypes.Player
- * @typedef {import("../../types/playerTypes").SeasonStanding} PlayerTypes.SeasonStanding
- * @typedef {import("../../types/playerTypes").SeasonStats} PlayerTypes.SeasonStats
+ * @typedef {import("../../types/node/playerTypes").Career} PlayerTypes.Career
+ * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
+ * @typedef {import("../../types/node/playerTypes").SeasonStanding} PlayerTypes.SeasonStanding
+ * @typedef {import("../../types/node/playerTypes").SeasonStats} PlayerTypes.SeasonStats
  */
 
 const Db = require("../database/player"),

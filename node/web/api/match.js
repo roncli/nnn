@@ -1,9 +1,10 @@
-const Challenge = require("../../src/models/challenge");
-
 /**
  * @typedef {import("express").Request} Express.Request
  * @typedef {import("express").Response} Express.Response
  */
+
+const Challenge = require("../../src/models/challenge"),
+    RouterBase = require("hot-router").RouterBase;
 
 //  #   #          #            #        #             #
 //  #   #          #            #       # #
@@ -17,7 +18,25 @@ const Challenge = require("../../src/models/challenge");
 /**
  * A class that represents the Match API.
  */
-class MatchApi {
+class MatchApi extends RouterBase {
+    //                    #
+    //                    #
+    // ###    ##   #  #  ###    ##
+    // #  #  #  #  #  #   #    # ##
+    // #     #  #  #  #   #    ##
+    // #      ##    ###    ##   ##
+    /**
+     * Retrieves the route parameters for the class.
+     * @returns {RouterBase.Route} The route parameters.
+     */
+    static get route() {
+        const route = {...super.route};
+
+        route.path = "/api/match";
+
+        return route;
+    }
+
     //              #
     //              #
     //  ###   ##   ###
@@ -48,9 +67,5 @@ class MatchApi {
         return res.json(await (await Challenge.getMatchesBySeason(season, page)).map((m) => ({match: m})));
     }
 }
-
-MatchApi.route = {
-    path: "/api/match"
-};
 
 module.exports = MatchApi;

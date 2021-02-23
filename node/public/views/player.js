@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/viewTypes").PlayerViewParameters} ViewTypes.PlayerViewParameters
+ * @typedef {import("../../types/browser/viewTypes").PlayerViewParameters} ViewTypes.PlayerViewParameters
  */
 
 //  ####    ##                                #   #    #
@@ -33,7 +33,7 @@ class PlayerView {
         return /* html */`
             <div id="player">
                 <div>
-                    <div class="name font-pixel-huge">${PlayerView.Common.htmlEncode(player.name)}</div>
+                    <div class="name font-pixel-huge">${PlayerView.Encoding.htmlEncode(player.name)}</div>
                     ${player.active ? "" : /* html */`
                         <br /><div class="inactive">Inactive</div>
                     `}
@@ -67,9 +67,9 @@ class PlayerView {
                             <div>${c.won}-${c.lost}</div>
                             <div>${c.completed}</div>
                             <div>${c.wonDepth ? `${c.wonDepth.toFixed(0)}m` : ""}</div>
-                            <div>${c.wonTime ? PlayerView.Common.formatTimespan(c.wonTime) : ""}</div>
+                            <div>${c.wonTime ? PlayerView.Time.formatTimespan(c.wonTime) : ""}</div>
                             <div>${c.lossDepth ? `${c.lossDepth.toFixed(0)}m` : ""}</div>
-                            <div>${c.lossTime ? PlayerView.Common.formatTimespan(c.lossTime) : ""}</div>
+                            <div>${c.lossTime ? PlayerView.Time.formatTimespan(c.lossTime) : ""}</div>
                         `).join("")}
                     </div>
                 </div>
@@ -93,14 +93,14 @@ class PlayerView {
                         <div class="header font-pixel-huge span-2">Avg Win Stats</div>
                         <div class="header font-pixel-huge span-2">Avg Loss Stats</div>
                         ${performance.map((p) => /* html */`
-                            <div><a href="/player/${p.opponentPlayerId}/${encodeURIComponent(p.opponent)}">${PlayerView.Common.htmlEncode(p.opponent)}</a></div>
+                            <div><a href="/player/${p.opponentPlayerId}/${encodeURIComponent(p.opponent)}">${PlayerView.Encoding.htmlEncode(p.opponent)}</a></div>
                             <div>${p.games}</div>
                             <div>${p.won}-${p.lost}</div>
                             <div>${p.completed}</div>
                             <div>${p.wonDepth ? `${p.wonDepth.toFixed(0)}m` : ""}</div>
-                            <div>${p.wonTime ? PlayerView.Common.formatTimespan(p.wonTime) : ""}</div>
+                            <div>${p.wonTime ? PlayerView.Time.formatTimespan(p.wonTime) : ""}</div>
                             <div>${p.lossDepth ? `${p.lossDepth.toFixed(0)}m` : ""}</div>
-                            <div>${p.lossTime ? PlayerView.Common.formatTimespan(p.lossTime) : ""}</div>
+                            <div>${p.lossTime ? PlayerView.Time.formatTimespan(p.lossTime) : ""}</div>
                         `).join("")}
                     </div>
                 </div>
@@ -131,15 +131,15 @@ class PlayerView {
                                 ${g.ratingChange === void 0 || g.ratingChange === null ? "" : g.ratingChange.toFixed(0) === "0" || g.ratingChange < 0 ? "" : "+"}${g.ratingChange.toFixed(0)}
                             </div>
                             <div>${g.depth ? `${g.depth.toFixed(0)}m` : ""}</div>
-                            <div>${g.time ? PlayerView.Common.formatTimespan(g.time) : ""}</div>
-                            <div><a href="/player/${g.opponentPlayerId}/${encodeURIComponent(g.opponent)}">${PlayerView.Common.htmlEncode(g.opponent)}</a></div>
+                            <div>${g.time ? PlayerView.Time.formatTimespan(g.time) : ""}</div>
+                            <div><a href="/player/${g.opponentPlayerId}/${encodeURIComponent(g.opponent)}">${PlayerView.Encoding.htmlEncode(g.opponent)}</a></div>
                             <div>
                                 ${g.opponentCompleted ? /* html */`
                                     <div class="completed"></div>
                                 ` : ""}
                             </div>
                             <div>${g.opponentDepth ? `${g.opponentDepth.toFixed(0)}m` : ""}</div>
-                            <div>${g.opponentTime ? PlayerView.Common.formatTimespan(g.opponentTime) : ""}</div>
+                            <div>${g.opponentTime ? PlayerView.Time.formatTimespan(g.opponentTime) : ""}</div>
                         `).join("")}
                     </div>
                 </div>
@@ -148,9 +148,13 @@ class PlayerView {
     }
 }
 
-/** @type {typeof import("../../web/includes/common")} */
+/** @type {typeof import("../js/common/encoding")} */
 // @ts-ignore
-PlayerView.Common = typeof Common === "undefined" ? require("../../web/includes/common") : Common; // eslint-disable-line no-undef
+PlayerView.Encoding = typeof Encoding === "undefined" ? require("../js/common/encoding") : Encoding; // eslint-disable-line no-undef
+
+/** @type {typeof import("../js/common/time")} */
+// @ts-ignore
+PlayerView.Time = typeof Time === "undefined" ? require("../js/common/time") : Time; // eslint-disable-line no-undef
 
 if (typeof module !== "undefined") {
     module.exports = PlayerView; // eslint-disable-line no-undef

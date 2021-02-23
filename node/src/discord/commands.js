@@ -2,17 +2,17 @@
  * @typedef {import("discord.js").GuildMember} DiscordJs.GuildMember
  * @typedef {import("discord.js").TextChannel} DiscordJs.TextChannel
  * @typedef {import("discord.js").User} DiscordJs.User
- * @typedef {import("../../types/playerTypes").Player} PlayerTypes.Player
+ * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
  */
 
 const tz = require("timezone-js"),
     tzdata = require("tzdata"),
 
     Challenge = require("../models/challenge"),
-    Common = require("../../web/includes/common"),
     Player = require("../models/player"),
     pjson = require("../../package.json"),
     Rating = require("../models/rating"),
+    Time = require("../../public/js/common/time"),
     Warning = require("../errors/warning"),
 
     idParse = /^<@!?(?<id>[0-9]+)>$/,
@@ -1326,12 +1326,12 @@ class Commands {
             fields: [
                 {
                     name: `**${stats.won} Win${stats.won === 1 ? "" : "s"}**`,
-                    value: `${stats.won === 0 ? "N/A" : `Avg Depth: ${stats.wonDepth.toFixed(0)}\nAvg Time: ${Common.formatTimespan(stats.wonTime)}`}`,
+                    value: `${stats.won === 0 ? "N/A" : `Avg Depth: ${stats.wonDepth.toFixed(0)}\nAvg Time: ${Time.formatTimespan(stats.wonTime)}`}`,
                     inline: true
                 },
                 {
                     name: `**${stats.lost} Loss${stats.lost === 1 ? "" : "es"}**`,
-                    value: `${stats.lost === 0 ? "N/A" : `Avg Depth: ${stats.lossDepth.toFixed(0)}\nAvg Time: ${Common.formatTimespan(stats.lossTime)}`}`,
+                    value: `${stats.lost === 0 ? "N/A" : `Avg Depth: ${stats.lossDepth.toFixed(0)}\nAvg Time: ${Time.formatTimespan(stats.lossTime)}`}`,
                     inline: true
                 }
             ]

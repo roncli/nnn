@@ -1,13 +1,14 @@
 const compression = require("compression"),
     express = require("express"),
+    HotRouter = require("hot-router"),
     Log = require("node-application-insights-logger"),
+    path = require("path"),
     tz = require("timezone-js"),
     tzdata = require("tzdata"),
     util = require("util"),
 
     Discord = require("./src/discord"),
-    Minify = require("./src/minify"),
-    Router = require("./src/router");
+    Minify = require("./src/minify");
 
 process.on("unhandledRejection", (reason) => {
     Log.error("Unhandled promise rejection caught.", {err: reason instanceof Error ? reason : new Error(util.inspect(reason))});
@@ -24,6 +25,11 @@ process.on("unhandledRejection", (reason) => {
  * Starts up the application.
  */
 (async function startup() {
+    // Setup application insights.
+    if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY !== "") {
+        Log.setupApplicationInsights(process.env.APPINSIGHTS_INSTRUMENTATIONKEY, {application: "nnn", container: "nnn-node"});
+    }
+
     Log.info("Starting up...");
 
     // Set title.
@@ -39,16 +45,7 @@ process.on("unhandledRejection", (reason) => {
     // Remove powered by.
     app.disable("x-powered-by");
 
-    // Get the router.
-    /** @type {express.Router} */
-    let router;
-    try {
-        router = await Router.getRouter();
-    } catch (err) {
-        Log.critical("There was an error while setting up the router.", {err});
-        return;
-    }
-
+    // Load timezones.
     tz.timezone.loadingScheme = tz.timezone.loadingSchemes.MANUAL_LOAD;
     tz.timezone.loadZoneDataFromObject(tzdata);
 
@@ -59,13 +56,14 @@ process.on("unhandledRejection", (reason) => {
     // Initialize middleware stack.
     app.use(compression());
 
-    // Setup public redirects.
-    app.use(express.static("public"));
-
+    // Correct IP from web server.
     app.use((req, res, next) => {
         req.ip = (req.headers["x-forwarded-for"] ? req.headers["x-forwarded-for"].toString() : void 0) || req.ip;
         next();
     });
+
+    // Setup public redirects.
+    app.use(express.static("public"));
 
     // Setup Discord redirect.
     app.get("/discord", (req, res) => {
@@ -76,30 +74,16 @@ process.on("unhandledRejection", (reason) => {
     app.get("/css", Minify.cssHandler);
     app.get("/js", Minify.jsHandler);
 
-    // 500 is an internal route, 404 it if it's requested directly.
-    app.use("/500", (req, res, next) => {
-        req.method = "GET";
-        req.url = "/404";
-        router(req, res, next);
+    // Setup hot-router.
+    const router = new HotRouter.Router();
+    router.on("error", (data) => {
+        Log.error(data.message, {err: data.err, req: data.req});
     });
-
-    // Setup dynamic routing.
-    app.use("/", router);
-
-    // 404 remaining pages.
-    app.use((req, res, next) => {
-        req.method = "GET";
-        req.url = "/404";
-        router(req, res, next);
-    });
-
-    // 500 errors.
-    app.use((err, req, res, next) => {
-        Log.error("Unhandled error has occurred.", {err});
-        req.method = "GET";
-        req.url = "/500";
-        router(req, res, next);
-    });
+    try {
+        app.use("/", await router.getRouter(path.join(__dirname, "web"), {hot: false}));
+    } catch (err) {
+        Log.critical("Could not set up routes.", {err});
+    }
 
     // Startup web server.
     const port = process.env.PORT || 3030;

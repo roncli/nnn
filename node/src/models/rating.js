@@ -1,9 +1,9 @@
 /**
  * @typedef {import("discord.js").TextChannel} DiscordJs.TextChannel
- * @typedef {import("../../types/playerTypes").Player} PlayerTypes.Player
- * @typedef {import("../../types/ratingTypes").RankAndRating} RatingTypes.RankAndRating
- * @typedef {import("../../types/ratingTypes").RatingChange} RatingTypes.RatingChange
- * @typedef {import("../../types/ratingTypes").Standing} RatingTypes.Standing
+ * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
+ * @typedef {import("../../types/node/ratingTypes").RankAndRating} RatingTypes.RankAndRating
+ * @typedef {import("../../types/node/ratingTypes").RatingChange} RatingTypes.RatingChange
+ * @typedef {import("../../types/node/ratingTypes").Standing} RatingTypes.Standing
  */
 
 const ChallengeDb = require("../database/challenge"),

@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/viewTypes").IndexViewParameters} ViewTypes.IndexViewParameters
+ * @typedef {import("../../types/browser/viewTypes").IndexViewParameters} ViewTypes.IndexViewParameters
  */
 
 //   ###              #                #   #    #

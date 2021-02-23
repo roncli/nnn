@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/viewTypes").HomeViewParameters} ViewTypes.HomeViewParameters
+ * @typedef {import("../../types/browser/viewTypes").HomeViewParameters} ViewTypes.HomeViewParameters
  */
 
 //  #   #                       #   #    #
@@ -42,14 +42,14 @@ class HomeView {
                     <div class="header font-pixel-huge avg avg-stats center-align">Avg Loss Stats</div>
                     ${standings.map((s, index) => /* html */`
                         <div>${index + 1}</div>
-                        <div><a href="/player/${s.playerId}/${encodeURIComponent(s.name)}">${HomeView.Common.htmlEncode(s.name)}</a></div>
+                        <div><a href="/player/${s.playerId}/${encodeURIComponent(s.name)}">${HomeView.Encoding.htmlEncode(s.name)}</a></div>
                         <div>${s.rating.toFixed(0)}</div>
                         <div>${s.won}-${s.lost}</div>
                         <div>${s.completed}</div>
                         <div class="avg">${s.wonDepth ? `${s.wonDepth.toFixed(0)}m` : ""}</div>
-                        <div class="avg">${HomeView.Common.formatTimespan(s.wonTime)}</div>
+                        <div class="avg">${HomeView.Time.formatTimespan(s.wonTime)}</div>
                         <div class="avg">${s.lossDepth ? `${s.lossDepth.toFixed(0)}m` : ""}</div>
-                        <div class="avg">${HomeView.Common.formatTimespan(s.lossTime)}</div>
+                        <div class="avg">${HomeView.Time.formatTimespan(s.lossTime)}</div>
                     `).join("")}
                 </div>
             ` : /* html */`
@@ -60,7 +60,7 @@ class HomeView {
                 <div class="section font-pixel-huge">News</div>
                 <div id="articles">
                     ${news.map((n) => /* html */`
-                        <div class="author">Posted by ${HomeView.Common.htmlEncode(n.member.displayName)}, <span><time class="local" datetime="${n.createdTimestamp}"></time></span></div>
+                        <div class="author">Posted by ${HomeView.Encoding.htmlEncode(n.member.displayName)}, <span><time class="local" datetime="${n.createdTimestamp}"></time></span></div>
                         <div class="body">${n.content}</div>
                     `).join("")}
                 </div>
@@ -69,9 +69,13 @@ class HomeView {
     }
 }
 
-/** @type {typeof import("../../web/includes/common")} */
+/** @type {typeof import("../js/common/encoding")} */
 // @ts-ignore
-HomeView.Common = typeof Common === "undefined" ? require("../../web/includes/common") : Common; // eslint-disable-line no-undef
+HomeView.Encoding = typeof Encoding === "undefined" ? require("../js/common/encoding") : Encoding; // eslint-disable-line no-undef
+
+/** @type {typeof import("../js/common/time")} */
+// @ts-ignore
+HomeView.Time = typeof Time === "undefined" ? require("../js/common/time") : Time; // eslint-disable-line no-undef
 
 if (typeof module !== "undefined") {
     module.exports = HomeView; // eslint-disable-line no-undef

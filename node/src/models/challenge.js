@@ -1,22 +1,22 @@
 /**
- * @typedef {import("../../types/challengeTypes").Challenge} ChallengeTypes.Challenge
- * @typedef {import("../../types/challengeTypes").ChallengeWithPlayers} ChallengeTypes.ChallengeWithPlayers
- * @typedef {import("../../types/challengeTypes").Match} ChallengeTypes.Match
- * @typedef {import("../../types/challengeTypes").Stats} ChallengeTypes.Stats
- * @typedef {import("../../types/challengeTypes").UpcomingChallenge} ChallengeTypes.UpcomingChallenge
+ * @typedef {import("../../types/node/challengeTypes").Challenge} ChallengeTypes.Challenge
+ * @typedef {import("../../types/node/challengeTypes").ChallengeWithPlayers} ChallengeTypes.ChallengeWithPlayers
+ * @typedef {import("../../types/node/challengeTypes").Match} ChallengeTypes.Match
+ * @typedef {import("../../types/node/challengeTypes").Stats} ChallengeTypes.Stats
+ * @typedef {import("../../types/node/challengeTypes").UpcomingChallenge} ChallengeTypes.UpcomingChallenge
  * @typedef {import("discord.js").CategoryChannel} DiscordJs.CategoryChannel
  * @typedef {import("discord.js").GuildMember} DiscordJs.GuildMember
  * @typedef {import("discord.js").TextChannel} DiscordJs.TextChannel
  * @typedef {import("discord.js").User} DiscordJs.User
- * @typedef {import("../../types/playerTypes").Player} PlayerTypes.Player
+ * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
  */
 
-const Common = require("../../web/includes/common"),
-    Db = require("../database/challenge"),
+const Db = require("../database/challenge"),
     Exception = require("../errors/exception"),
     Player = require("./player"),
     Rating = require("./rating"),
     SeasonDb = require("../database/season"),
+    Time = require("../../public/js/common/time"),
 
     channelParse = /^[0-9a-z]+-[0-9a-z]+-(?<id>[1-9][0-9]*)$/i,
     timezoneParse = /^[1-9][0-9]*, (?<timezoneName>.*)$/;
@@ -433,15 +433,15 @@ class Challenge {
                     fields: [
                         {
                             name: `${this.players.challengingPlayer.name} Stats`,
-                            value: `Depth: **${this.stats.challengingPlayer.depth}**\nTime: **${Common.formatTimespan(this.stats.challengingPlayer.time)}**${this.stats.challengingPlayer.completed ? "\n**Completed the game!**" : ""}`,
+                            value: `Depth: **${this.stats.challengingPlayer.depth}**\nTime: **${Time.formatTimespan(this.stats.challengingPlayer.time)}**${this.stats.challengingPlayer.completed ? "\n**Completed the game!**" : ""}`,
                             inline: true
                         }, {
                             name: `${this.players.challengedPlayer.name} Stats`,
-                            value: `Depth: **${this.stats.challengedPlayer.depth}**\nTime: **${Common.formatTimespan(this.stats.challengedPlayer.time)}**${this.stats.challengedPlayer.completed ? "\n**Completed the game!**" : ""}`,
+                            value: `Depth: **${this.stats.challengedPlayer.depth}**\nTime: **${Time.formatTimespan(this.stats.challengedPlayer.time)}**${this.stats.challengedPlayer.completed ? "\n**Completed the game!**" : ""}`,
                             inline: true
                         }, {
                             name: "For match details, visit:",
-                            value: `https://${process.env.DOMAIN}/match/${this._id}/${Common.htmlEncode(this.players.challengingPlayer.name)}/${this.players.challengedPlayer.name}`,
+                            value: `https://${process.env.DOMAIN}/match/${this._id}/${encodeURI(this.players.challengingPlayer.name)}/${encodeURI(this.players.challengedPlayer.name)}`,
                             inline: false
                         }
                     ]
@@ -784,11 +784,11 @@ class Challenge {
      * Sets a player's stats for a match.
      * @param {PlayerTypes.Player} player The player.
      * @param {number} depth The depth, in meters.
-     * @param {number} time The time, in seconds.
+     * @param {number} timeSeconds The time, in seconds.
      * @param {boolean} completed Whether they completed the game.
      * @returns {Promise} A promise that resolves when the stat has been set.
      */
-    async setStat(player, depth, time, completed) {
+    async setStat(player, depth, timeSeconds, completed) {
         const challengingPlayer = player._id === this.players.challengingPlayerId;
 
         if (!this.stats) {
@@ -800,22 +800,22 @@ class Challenge {
 
         if (challengingPlayer) {
             this.stats.challengingPlayer.depth = depth;
-            this.stats.challengingPlayer.time = time;
+            this.stats.challengingPlayer.time = timeSeconds;
             this.stats.challengingPlayer.completed = completed;
         } else {
             this.stats.challengedPlayer.depth = depth;
-            this.stats.challengedPlayer.time = time;
+            this.stats.challengedPlayer.time = timeSeconds;
             this.stats.challengedPlayer.completed = completed;
         }
 
         try {
-            await Db.setStat(this, challengingPlayer, depth, time, completed);
+            await Db.setStat(this, challengingPlayer, depth, timeSeconds, completed);
         } catch (err) {
             throw new Exception("There was a database error setting a stat.", err);
         }
 
         try {
-            await Discord.queue(`Stats were added for <@${player.discordId}>:\n**Depth**: ${depth}m\n**Time**: ${Common.formatTimespan(time)}\n**Completed**: ${completed ? "Yes" : "No"}`, this.channel);
+            await Discord.queue(`Stats were added for <@${player.discordId}>:\n**Depth**: ${depth}m\n**Time**: ${Time.formatTimespan(timeSeconds)}\n**Completed**: ${completed ? "Yes" : "No"}`, this.channel);
 
             await this.updatePinnedPost();
         } catch (err) {

@@ -1,6 +1,6 @@
-import {Match} from "./challengeTypes"
+import {Match} from "../node/challengeTypes"
 import DiscordJs from "discord.js"
-import PlayerTypes from "./playerTypes"
+import PlayerTypes from "../node/playerTypes"
 
 declare namespace ViewTypes {
     type HomeViewParameters = {

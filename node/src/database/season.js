@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/seasonTypes").Season} SeasonTypes.Season
+ * @typedef {import("../../types/node/seasonTypes").Season} SeasonTypes.Season
  */
 
 const MongoDb = require("mongodb"),

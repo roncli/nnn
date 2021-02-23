@@ -7,6 +7,7 @@ const Common = require("../includes/common"),
     NotFoundView = require("../../public/views/404"),
     PlayerModel = require("../../src/models/player"),
     PlayerView = require("../../public/views/player"),
+    RouterBase = require("hot-router").RouterBase,
     Season = require("../../src/models/season");
 
 //  ####    ##
@@ -21,7 +22,25 @@ const Common = require("../includes/common"),
 /**
  * A class that represents the player page.
  */
-class Player {
+class Player extends RouterBase {
+    //                    #
+    //                    #
+    // ###    ##   #  #  ###    ##
+    // #  #  #  #  #  #   #    # ##
+    // #     #  #  #  #   #    ##
+    // #      ##    ###    ##   ##
+    /**
+     * Retrieves the route parameters for the class.
+     * @returns {RouterBase.Route} The route parameters.
+     */
+    static get route() {
+        const route = {...super.route};
+
+        route.path = "/player/:id/:name";
+
+        return route;
+    }
+
     //              #
     //              #
     //  ###   ##   ###
@@ -68,9 +87,5 @@ class Player {
         }
     }
 }
-
-Player.route = {
-    path: "/player/:id/:name"
-};
 
 module.exports = Player;

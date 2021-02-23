@@ -114,12 +114,11 @@
         {
             "files": ["public/**/*.js"],
             "env": {
-                "es6": false,
+                "es6": true,
                 "node": false,
                 "browser": true
             },
             "parserOptions": {
-                "ecmaVersion": 5,
                 "sourceType": "script"
             },
             "rules": {
@@ -130,6 +129,14 @@
             }
         },
         {
+            "env": {
+                "es6": true,
+                "node": false,
+                "browser": true
+            },
+            "parserOptions": {
+                "sourceType": "script"
+            },
             "files": ["public/views/**/*.js"],
             "rules": {
                 "no-implicit-globals": "off"

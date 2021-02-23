@@ -1,13 +1,13 @@
 /**
  * @typedef {import("../models/challenge")} Challenge
- * @typedef {import("../../types/challengeTypes").Challenge} ChallengeTypes.Challenge
- * @typedef {import("../../types/challengeTypes").Match} ChallengeTypes.Match
- * @typedef {import("../../types/challengeTypes").Result} ChallengeTypes.Result
- * @typedef {import("../../types/challengeTypes").UpcomingChallenge} ChallengeTypes.UpcomingChallenge
- * @typedef {import("../../types/dbTypes").Challenge} DbTypes.Challenge
- * @typedef {import("../../types/dbTypes").ChallengeUpcomingChallenge} DbTypes.ChallengeUpcomingChallenge
+ * @typedef {import("../../types/node/challengeTypes").Challenge} ChallengeTypes.Challenge
+ * @typedef {import("../../types/node/challengeTypes").Match} ChallengeTypes.Match
+ * @typedef {import("../../types/node/challengeTypes").Result} ChallengeTypes.Result
+ * @typedef {import("../../types/node/challengeTypes").UpcomingChallenge} ChallengeTypes.UpcomingChallenge
+ * @typedef {import("../../types/node/dbTypes").Challenge} DbTypes.Challenge
+ * @typedef {import("../../types/node/dbTypes").ChallengeUpcomingChallenge} DbTypes.ChallengeUpcomingChallenge
  * @typedef {import("mongodb").InsertOneWriteOpResult<DbTypes.Challenge>} MongoDb_InsertOneWriteOpResult.Challenge
- * @typedef {import("../../types/playerTypes").Player} PlayerTypes.Player
+ * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
  */
 
 const MongoDb = require("mongodb"),

@@ -4,7 +4,8 @@
  */
 
 const Common = require("../includes/common"),
-    LinksView = require("../../public/views/links");
+    LinksView = require("../../public/views/links"),
+    RouterBase = require("hot-router").RouterBase;
 
 //  #        #           #
 //  #                    #
@@ -16,7 +17,25 @@ const Common = require("../includes/common"),
 /**
  * A class that represents the links page.
  */
-class Links {
+class Links extends RouterBase {
+    //                    #
+    //                    #
+    // ###    ##   #  #  ###    ##
+    // #  #  #  #  #  #   #    # ##
+    // #     #  #  #  #   #    ##
+    // #      ##    ###    ##   ##
+    /**
+     * Retrieves the route parameters for the class.
+     * @returns {RouterBase.Route} The route parameters.
+     */
+    static get route() {
+        const route = {...super.route};
+
+        route.path = "/links";
+
+        return route;
+    }
+
     //              #
     //              #
     //  ###   ##   ###
@@ -39,9 +58,5 @@ class Links {
         ));
     }
 }
-
-Links.route = {
-    path: "/links"
-};
 
 module.exports = Links;

@@ -6,6 +6,7 @@
 const Challenge = require("../../src/models/challenge"),
     Common = require("../includes/common"),
     MatchesView = require("../../public/views/matches"),
+    RouterBase = require("hot-router").RouterBase,
     Season = require("../../src/models/season");
 
 //  #   #          #            #
@@ -18,7 +19,25 @@ const Challenge = require("../../src/models/challenge"),
 /**
  * A class that represents the matches page.
  */
-class Matches {
+class Matches extends RouterBase {
+    //                    #
+    //                    #
+    // ###    ##   #  #  ###    ##
+    // #  #  #  #  #  #   #    # ##
+    // #     #  #  #  #   #    ##
+    // #      ##    ###    ##   ##
+    /**
+     * Retrieves the route parameters for the class.
+     * @returns {RouterBase.Route} The route parameters.
+     */
+    static get route() {
+        const route = {...super.route};
+
+        route.path = "/matches";
+
+        return route;
+    }
+
     //              #
     //              #
     //  ###   ##   ###
@@ -54,9 +73,5 @@ class Matches {
         ));
     }
 }
-
-Matches.route = {
-    path: "/matches"
-};
 
 module.exports = Matches;

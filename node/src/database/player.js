@@ -1,11 +1,11 @@
 /**
- * @typedef {import("../../types/dbTypes").Player} DbTypes.Player
+ * @typedef {import("../../types/node/dbTypes").Player} DbTypes.Player
  * @typedef {import("discord.js").GuildMember} DiscordJs.GuildMember
  * @typedef {import("mongodb").InsertOneWriteOpResult<DbTypes.Player>} MongoDb_InsertOneWriteOpResult.Player
- * @typedef {import("../../types/playerTypes").Career} PlayerTypes.Career
- * @typedef {import("../../types/playerTypes").Player} PlayerTypes.Player
- * @typedef {import("../../types/playerTypes").SeasonStanding} PlayerTypes.SeasonStanding
- * @typedef {import("../../types/playerTypes").SeasonStats} PlayerTypes.SeasonStats
+ * @typedef {import("../../types/node/playerTypes").Career} PlayerTypes.Career
+ * @typedef {import("../../types/node/playerTypes").Player} PlayerTypes.Player
+ * @typedef {import("../../types/node/playerTypes").SeasonStanding} PlayerTypes.SeasonStanding
+ * @typedef {import("../../types/node/playerTypes").SeasonStats} PlayerTypes.SeasonStats
  */
 
 const MongoDb = require("mongodb"),

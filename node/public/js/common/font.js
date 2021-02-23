@@ -1,6 +1,50 @@
-/* global SpriteFont */
+//  #####                 #
+//  #                     #
+//  #       ###   # ##   ####
+//  ####   #   #  ##  #   #
+//  #      #   #  #   #   #
+//  #      #   #  #   #   #  #
+//  #       ###   #   #    ##
+/**
+ * A class to setup SpriteFont.
+ */
+class Font {
+    //                                ####               #
+    //                                #                  #
+    // ###    ###  ###    ###    ##   ###    ##   ###   ###
+    // #  #  #  #  #  #  ##     # ##  #     #  #  #  #   #
+    // #  #  # ##  #       ##   ##    #     #  #  #  #   #
+    // ###    # #  #     ###     ##   #      ##   #  #    ##
+    // #
+    /**
+     * Parses font elements to display text using SpriteFont.
+     * @returns {void}
+     */
+    static parseFont() {
+        /** @type {NodeListOf<HTMLElement>} */
+        const elements = document.querySelectorAll(".font-pixel-huge");
 
-SpriteFont.setup({
+        elements.forEach((el) => {
+            new window.SpriteFont(el, "Font Pixel Huge");
+        });
+    }
+
+    // ###    ##   #  #   ##                #                 #    #                    #           #
+    // #  #  #  #  ####  #  #               #                 #    #                    #           #
+    // #  #  #  #  ####  #      ##   ###   ###    ##   ###   ###   #      ##    ###   ###   ##    ###
+    // #  #  #  #  #  #  #     #  #  #  #   #    # ##  #  #   #    #     #  #  #  #  #  #  # ##  #  #
+    // #  #  #  #  #  #  #  #  #  #  #  #   #    ##    #  #   #    #     #  #  # ##  #  #  ##    #  #
+    // ###    ##   #  #   ##    ##   #  #    ##   ##   #  #    ##  ####   ##    # #   ###   ##    ###
+    /**
+     * Parses fonts on page load.
+     * @returns {void}
+     */
+    static DOMContentLoaded() {
+        Font.parseFont();
+    }
+}
+
+window.SpriteFont.setup({
     name: "Font Pixel Huge",
     url: "/images/font_pixel_huge.png",
     letters: {
@@ -242,3 +286,10 @@ SpriteFont.setup({
         "—": {left: 608, top: 15, width: 9, height: 15}
     }
 });
+
+if (typeof module === "undefined") {
+    document.addEventListener("DOMContentLoaded", Font.DOMContentLoaded);
+    window.Font = Font;
+} else {
+    module.exports = Font; // eslint-disable-line no-undef
+}

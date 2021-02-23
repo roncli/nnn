@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/viewTypes").StandingsViewParameters} ViewTypes.StandingsViewParameters
+ * @typedef {import("../../types/browser/viewTypes").StandingsViewParameters} ViewTypes.StandingsViewParameters
  */
 
 //   ###    #                       #    #                         #   #
@@ -52,14 +52,14 @@ class StandingsView {
                         <div class="header font-pixel-huge avg avg-stats center-align">Avg Loss Stats</div>
                         ${standings.map((s, index) => /* html */`
                             <div>${index + 1}</div>
-                            <div><a href="/player/${s.playerId}/${encodeURIComponent(s.name)}">${StandingsView.Common.htmlEncode(s.name)}</a></div>
+                            <div><a href="/player/${s.playerId}/${encodeURIComponent(s.name)}">${StandingsView.Encoding.htmlEncode(s.name)}</a></div>
                             <div>${s.rating.toFixed(0)}</div>
                             <div>${s.won}-${s.lost}</div>
                             <div>${s.completed}</div>
                             <div class="avg">${s.wonDepth ? `${s.wonDepth.toFixed(0)}m` : ""}</div>
-                            <div class="avg">${StandingsView.Common.formatTimespan(s.wonTime)}</div>
+                            <div class="avg">${StandingsView.Time.formatTimespan(s.wonTime)}</div>
                             <div class="avg">${s.lossDepth ? `${s.lossDepth.toFixed(0)}m` : ""}</div>
-                            <div class="avg">${StandingsView.Common.formatTimespan(s.lossTime)}</div>
+                            <div class="avg">${StandingsView.Time.formatTimespan(s.lossTime)}</div>
                         `).join("")}
                     </div>
                 ` : /* html */`
@@ -70,9 +70,13 @@ class StandingsView {
     }
 }
 
-/** @type {typeof import("../../web/includes/common")} */
+/** @type {typeof import("../js/common/encoding")} */
 // @ts-ignore
-StandingsView.Common = typeof Common === "undefined" ? require("../../web/includes/common") : Common; // eslint-disable-line no-undef
+StandingsView.Encoding = typeof Encoding === "undefined" ? require("../js/common/encoding") : Encoding; // eslint-disable-line no-undef
+
+/** @type {typeof import("../js/common/time")} */
+// @ts-ignore
+StandingsView.Time = typeof Time === "undefined" ? require("../js/common/time") : Time; // eslint-disable-line no-undef
 
 if (typeof module !== "undefined") {
     module.exports = StandingsView; // eslint-disable-line no-undef

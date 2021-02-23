@@ -116,7 +116,11 @@ class SpriteFont {
     }
 }
 
-window.SpriteFont = SpriteFont;
-
 /** @type {Fonts} */
 SpriteFont.fonts = {};
+
+if (typeof module === "undefined") {
+    window.SpriteFont = SpriteFont;
+} else {
+    module.exports = SpriteFont; // eslint-disable-line no-undef
+}

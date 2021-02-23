@@ -9,7 +9,8 @@ const DiscordMarkdown = require("discord-markdown"),
     Common = require("../includes/common"),
     Discord = require("../../src/discord"),
     HomeView = require("../../public/views/home"),
-    Player = require("../../src/models/player");
+    Player = require("../../src/models/player"),
+    RouterBase = require("hot-router").RouterBase;
 
 //   #   #
 //   #   #
@@ -21,7 +22,25 @@ const DiscordMarkdown = require("discord-markdown"),
 /**
  * A class that represents the home page.
  */
-class Home {
+class Home extends RouterBase {
+    //                    #
+    //                    #
+    // ###    ##   #  #  ###    ##
+    // #  #  #  #  #  #   #    # ##
+    // #     #  #  #  #   #    ##
+    // #      ##    ###    ##   ##
+    /**
+     * Retrieves the route parameters for the class.
+     * @returns {RouterBase.Route} The route parameters.
+     */
+    static get route() {
+        const route = {...super.route};
+
+        route.path = "/";
+
+        return route;
+    }
+
     //              #
     //              #
     //  ###   ##   ###
@@ -62,9 +81,5 @@ class Home {
         ));
     }
 }
-
-Home.route = {
-    path: "/"
-};
 
 module.exports = Home;

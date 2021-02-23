@@ -5,6 +5,7 @@
 
 const Common = require("../includes/common"),
     Player = require("../../src/models/player"),
+    RouterBase = require("hot-router").RouterBase,
     Season = require("../../src/models/season"),
     StandingsView = require("../../public/views/standings");
 
@@ -20,7 +21,25 @@ const Common = require("../includes/common"),
 /**
  * A class that represents the standings page.
  */
-class Standings {
+class Standings extends RouterBase {
+    //                    #
+    //                    #
+    // ###    ##   #  #  ###    ##
+    // #  #  #  #  #  #   #    # ##
+    // #     #  #  #  #   #    ##
+    // #      ##    ###    ##   ##
+    /**
+     * Retrieves the route parameters for the class.
+     * @returns {RouterBase.Route} The route parameters.
+     */
+    static get route() {
+        const route = {...super.route};
+
+        route.path = "/standings";
+
+        return route;
+    }
+
     //              #
     //              #
     //  ###   ##   ###
@@ -52,9 +71,5 @@ class Standings {
         ));
     }
 }
-
-Standings.route = {
-    path: "/standings"
-};
 
 module.exports = Standings;

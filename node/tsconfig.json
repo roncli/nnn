@@ -14,7 +14,7 @@
         "public/js/**/*"
     ],
     "include": [
-        "**/*.d.ts",
-        "**/*.js"
+        "**/*.js",
+        "types/node/*.d.ts"
     ]
 }

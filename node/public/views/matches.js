@@ -1,5 +1,5 @@
 /**
- * @typedef {import("../../types/viewTypes").MatchesViewParameters} ViewTypes.MatchesViewParameters
+ * @typedef {import("../../types/browser/viewTypes").MatchesViewParameters} ViewTypes.MatchesViewParameters
  */
 
 //  #   #          #            #                    #   #    #
@@ -78,10 +78,6 @@ class MatchesView {
         `;
     }
 }
-
-/** @type {typeof import("../../web/includes/common")} */
-// @ts-ignore
-MatchesView.Common = typeof Common === "undefined" ? require("../../web/includes/common") : Common; // eslint-disable-line no-undef
 
 /** @type {typeof import("./matches/match.js")} */
 // @ts-ignore
