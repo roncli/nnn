@@ -4,7 +4,7 @@
  */
 
 const HtmlMinifier = require("html-minifier"),
-    Minify = require("../../src/minify"),
+    Minify = require("node-minify"),
     pjson = require("../../package.json"),
     RouterBase = require("hot-router").RouterBase;
 

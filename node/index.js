@@ -2,13 +2,14 @@ const compression = require("compression"),
     express = require("express"),
     HotRouter = require("hot-router"),
     Log = require("node-application-insights-logger"),
+    Minify = require("node-minify"),
     path = require("path"),
     tz = require("timezone-js"),
     tzdata = require("tzdata"),
     util = require("util"),
 
-    Discord = require("./src/discord"),
-    Minify = require("./src/minify");
+    Cache = require("./src/redis/cache"),
+    Discord = require("./src/discord");
 
 process.on("unhandledRejection", (reason) => {
     Log.error("Unhandled promise rejection caught.", {err: reason instanceof Error ? reason : new Error(util.inspect(reason))});
@@ -70,7 +71,18 @@ process.on("unhandledRejection", (reason) => {
         res.redirect(process.env.NNN_DISCORD_URL);
     });
 
-    // Setup JS/CSS handlers.
+    // Setup minification.
+    Minify.setup({
+        cssRoot: "/css/",
+        jsRoot: "/js/",
+        wwwRoot: path.join(__dirname, "public"),
+        caching: process.env.MINIFY_CACHE ? {
+            get: Cache.get,
+            set: (key, value) => Cache.add(key, value, new Date(new Date().getTime() + 86400000)),
+            prefix: process.env.REDIS_PREFIX
+        } : void 0,
+        disable: !process.env.MINIFY_ENABLED
+    });
     app.get("/css", Minify.cssHandler);
     app.get("/js", Minify.jsHandler);
 
