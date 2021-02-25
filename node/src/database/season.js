@@ -4,8 +4,9 @@
 
 const MongoDb = require("mongodb"),
 
-    Cache = require("../redis/cache"),
-    Db = require(".");
+    Cache = require("node-redis").Cache,
+    Db = require("."),
+    Log = require("node-application-insights-logger");
 
 //   ###                                      ####   #
 //  #   #                                      #  #  #
@@ -132,7 +133,12 @@ class SeasonDb {
         const key = `${process.env.REDIS_PREFIX}:seasonNumbers`;
 
         /** @type {number[]} */
-        let cache = await Cache.get(key);
+        let cache;
+        try {
+            cache = await Cache.get(key);
+        } catch (err) {
+            Log.error("An error occurred while getting the cache for season numbers.", {err});
+        }
 
         if (cache) {
             return cache;
@@ -147,7 +153,9 @@ class SeasonDb {
 
         const seasonObj = await SeasonDb.get(cache[cache.length - 1]);
 
-        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0);
+        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0).catch((err) => {
+            Log.error("An error occurred while setting the cache for season numbers.", {err});
+        });
 
         return cache;
     }

@@ -10,8 +10,9 @@
 
 const MongoDb = require("mongodb"),
 
-    Cache = require("../redis/cache"),
+    Cache = require("node-redis").Cache,
     Db = require("."),
+    Log = require("node-application-insights-logger"),
     Season = require("./season");
 
 //  ####    ##                                ####   #
@@ -147,7 +148,12 @@ class PlayerDb {
         const key = `${process.env.REDIS_PREFIX}:getCareer:${playerId || "null"}:${season || "null"}`;
 
         /** @type {PlayerTypes.Career} */
-        let cache = await Cache.get(key);
+        let cache;
+        try {
+            cache = await Cache.get(key);
+        } catch (err) {
+            Log.error("An error occurred while getting the cache for getting career stats.", {err, properties: {playerId}});
+        }
 
         if (cache) {
             return cache;
@@ -881,7 +887,9 @@ class PlayerDb {
 
         const seasonObj = await Season.get(season);
 
-        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0, [`${process.env.REDIS_PREFIX}:invalidate:player:${playerId}`, `${process.env.REDIS_PREFIX}:invalidate:players`]);
+        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0, [`${process.env.REDIS_PREFIX}:invalidate:player:${playerId}`, `${process.env.REDIS_PREFIX}:invalidate:players`]).catch((err) => {
+            Log.error("An error occurred while setting the cache for getting career stats.", {err, properties: {playerId}});
+        });
 
         return cache;
     }
@@ -902,7 +910,12 @@ class PlayerDb {
         const key = `${process.env.REDIS_PREFIX}:seasonStandings:${season || "null"}`;
 
         /** @type {PlayerTypes.SeasonStanding[]} */
-        let cache = await Cache.get(key);
+        let cache;
+        try {
+            cache = await Cache.get(key);
+        } catch (err) {
+            Log.error("An error occurred while getting the cache for season standings.", {err, properties: {season}});
+        }
 
         if (cache) {
             return cache;
@@ -1143,7 +1156,9 @@ class PlayerDb {
 
         const seasonObj = await Season.get(season);
 
-        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0, [`${process.env.REDIS_PREFIX}:invalidate:standings:${season}`]);
+        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0, [`${process.env.REDIS_PREFIX}:invalidate:standings:${season}`]).catch((err) => {
+            Log.error("An error occurred while setting the cache for season standings.", {err, properties: {season}});
+        });
 
         return cache;
     }

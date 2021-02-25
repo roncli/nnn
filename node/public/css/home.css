@@ -8,3 +8,12 @@
 #home #standings .avg-stats {
     grid-column-end: span 2;
 }
+
+#news #articles .author {
+    color: #246598;
+    font-weight: bold;
+}
+
+#news #articles .body {
+    margin-bottom: 20px;
+}

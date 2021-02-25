@@ -12,8 +12,9 @@
 
 const MongoDb = require("mongodb"),
 
-    Cache = require("../redis/cache"),
+    Cache = require("node-redis").Cache,
     Db = require("."),
+    Log = require("node-application-insights-logger"),
     Season = require("./season");
 
 //   ###   #              ##     ##                                ####   #
@@ -133,7 +134,9 @@ class ChallengeDb {
 
         await db.collection("challenge").findOneAndUpdate({_id: MongoDb.Long.fromNumber(challenge._id)}, {$set: {closeTime: challenge.closeTime, season: MongoDb.Long.fromNumber(challenge.season)}});
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengingPlayerId}`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengedPlayerId}`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengingPlayerId}`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengedPlayerId}`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when closing a challenge.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 
     //                     #    #                #  #         #          #
@@ -152,7 +155,9 @@ class ChallengeDb {
 
         await db.collection("challenge").findOneAndUpdate({_id: MongoDb.Long.fromNumber(challenge._id)}, {$set: {confirmedTime: challenge.confirmedTime}});
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengingPlayerId}`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengedPlayerId}`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengingPlayerId}`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengedPlayerId}`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when confirming a challenge.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 
     //                          #          ###                      #          #
@@ -171,7 +176,9 @@ class ChallengeDb {
 
         await db.collection("challenge").findOneAndUpdate({_id: MongoDb.Long.fromNumber(challenge._id)}, {$set: {rematchedTime: challenge.rematchedTime}});
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:upcoming`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:upcoming`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when creating a rematch.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 
     //   #    #             #
@@ -310,7 +317,12 @@ class ChallengeDb {
         const key = `${process.env.REDIS_PREFIX}:matchesBySeason:${season || "null"}:${page || "null"}:${pageSize || "null"}`;
 
         /** @type {ChallengeTypes.Match[]} */
-        let cache = await Cache.get(key);
+        let cache;
+        try {
+            cache = await Cache.get(key);
+        } catch (err) {
+            Log.error("An error occurred while getting the cache for getting matches by season.", {err, properties: {season, page, pageSize}});
+        }
 
         if (cache) {
             return cache;
@@ -389,7 +401,9 @@ class ChallengeDb {
 
         const seasonObj = await Season.get(season);
 
-        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0, [`${process.env.REDIS_PREFIX}:invalidate:matches`]);
+        Cache.add(key, cache, seasonObj && seasonObj.endDate || void 0, [`${process.env.REDIS_PREFIX}:invalidate:matches`]).catch((err) => {
+            Log.error("An error occurred while setting the cache for getting matches by season.", {err, properties: {season, page, pageSize}});
+        });
 
         return cache;
     }
@@ -510,7 +524,12 @@ class ChallengeDb {
         const key = `${process.env.REDIS_PREFIX}:upcomingAndCompleted:${season}`;
 
         /** @type {{upcoming: ChallengeTypes.Match[], totalCompleted: number}} */
-        let cache = await Cache.get(key);
+        let cache;
+        try {
+            cache = await Cache.get(key);
+        } catch (err) {
+            Log.error("An error occurred while getting the cache for the upcoming and completed match count.", {err, properties: {season}});
+        }
 
         if (cache) {
             return cache;
@@ -605,7 +624,9 @@ class ChallengeDb {
 
         cache = cache || {upcoming: [], totalCompleted: 0};
 
-        Cache.add(key, cache, void 0, [`${process.env.REDIS_PREFIX}:invalidate:upcoming`]);
+        Cache.add(key, cache, void 0, [`${process.env.REDIS_PREFIX}:invalidate:upcoming`]).catch((err) => {
+            Log.error("An error occurred while setting the cache for the upcoming and completed match count.", {err, properties: {season}});
+        });
 
         return cache;
     }
@@ -706,7 +727,9 @@ class ChallengeDb {
 
         await bulk.execute();
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:matches`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:matches`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when setting a comment for a match.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 
     //               #    ###                 #
@@ -774,7 +797,9 @@ class ChallengeDb {
 
         await db.collection("challenge").findOneAndUpdate({_id: MongoDb.Long.fromNumber(challenge._id)}, {$unset: {suggestedTime: "", suggestedByPlayerId: ""}, $set: {matchTime: date}});
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:matches`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:matches`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when setting the time for a match.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 
     //               #    ###    #     #    ##
@@ -798,7 +823,9 @@ class ChallengeDb {
             await db.collection("challenge").findOneAndUpdate({_id: MongoDb.Long.fromNumber(challenge._id)}, {$unset: {title: ""}});
         }
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:matches`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:matches`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when setting the title for a match.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 
     //               #    #  #   #
@@ -823,7 +850,9 @@ class ChallengeDb {
 
         await bulk.execute();
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:invalidate:matches`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:invalidate:matches`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when setting the winner of a match.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 
     //                                        #    ###    #
@@ -867,7 +896,9 @@ class ChallengeDb {
             await db.collection("challenge").findOneAndUpdate({_id: MongoDb.Long.fromNumber(challenge._id)}, {$unset: {voidTime: ""}});
         }
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengingPlayerId}`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengedPlayerId}`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${challenge.season}`, `${process.env.REDIS_PREFIX}:invalidate:upcoming`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengingPlayerId}`, `${process.env.REDIS_PREFIX}:invalidate:player:${challenge.players.challengedPlayerId}`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when setting the void on a match.", {err, properties: {challengeId: challenge._id}});
+        });
     }
 }
 

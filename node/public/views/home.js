@@ -60,7 +60,7 @@ class HomeView {
                 <div class="section font-pixel-huge">News</div>
                 <div id="articles">
                     ${news.map((n) => /* html */`
-                        <div class="author">Posted by ${HomeView.Encoding.htmlEncode(n.member.displayName)}, <span><time class="local" datetime="${n.createdTimestamp}"></time></span></div>
+                        <div class="author">Posted by ${HomeView.Encoding.htmlEncode(n.displayName)}, <span><time class="local" datetime="${n.createdTimestamp}"></time></span></div>
                         <div class="body">${n.content}</div>
                     `).join("")}
                 </div>

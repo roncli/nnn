@@ -4,12 +4,10 @@
  */
 
 const HtmlMinifier = require("html-minifier"),
+    IndexView = require("../../public/views/index"),
     Minify = require("node-minify"),
     pjson = require("../../package.json"),
     RouterBase = require("hot-router").RouterBase;
-
-/** @type {typeof import("../../public/views/index")} */
-let IndexView;
 
 //   ###
 //  #   #
@@ -54,10 +52,6 @@ class Common extends RouterBase {
      * @returns {string} The HTML of the full web page.
      */
     static page(head, files, html, req) {
-        if (!IndexView) {
-            IndexView = require("../../public/views/index");
-        }
-
         if (!files) {
             files = {js: [], css: []};
         }

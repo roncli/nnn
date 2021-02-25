@@ -1,14 +1,15 @@
-const compression = require("compression"),
+const Cache = require("node-redis").Cache,
+    compression = require("compression"),
     express = require("express"),
     HotRouter = require("hot-router"),
     Log = require("node-application-insights-logger"),
     Minify = require("node-minify"),
     path = require("path"),
+    Redis = require("node-redis"),
     tz = require("timezone-js"),
     tzdata = require("tzdata"),
     util = require("util"),
 
-    Cache = require("./src/redis/cache"),
     Discord = require("./src/discord");
 
 process.on("unhandledRejection", (reason) => {
@@ -40,12 +41,6 @@ process.on("unhandledRejection", (reason) => {
         process.stdout.write("\x1b]2;Noita Nemesis Nation\x1b\x5c");
     }
 
-    // Setup express app.
-    const app = express();
-
-    // Remove powered by.
-    app.disable("x-powered-by");
-
     // Load timezones.
     tz.timezone.loadingScheme = tz.timezone.loadingSchemes.MANUAL_LOAD;
     tz.timezone.loadZoneDataFromObject(tzdata);
@@ -53,6 +48,23 @@ process.on("unhandledRejection", (reason) => {
     // Startup Discord.
     Discord.startup();
     await Discord.connect();
+
+    // Setup Redis.
+    Redis.setup({
+        host: "redis",
+        port: +process.env.REDIS_PORT,
+        password: process.env.REDIS_PASSWORD
+    });
+    Redis.eventEmitter.on("error", (err) => {
+        Log.error(`Redis error: ${err.message}`, {err: err.err});
+    });
+    Redis.Cache.flush();
+
+    // Setup express app.
+    const app = express();
+
+    // Remove powered by.
+    app.disable("x-powered-by");
 
     // Initialize middleware stack.
     app.use(compression());
@@ -77,11 +89,22 @@ process.on("unhandledRejection", (reason) => {
         jsRoot: "/js/",
         wwwRoot: path.join(__dirname, "public"),
         caching: process.env.MINIFY_CACHE ? {
-            get: Cache.get,
-            set: (key, value) => Cache.add(key, value, new Date(new Date().getTime() + 86400000)),
+            get: async (key) => {
+                try {
+                    return await Cache.get(key);
+                } catch (err) {
+                    Log.error("An error occurred while attempting to get a Minify cache.", {err, properties: {key}});
+                    return void 0;
+                }
+            },
+            set: (key, value) => {
+                Cache.add(key, value, new Date(new Date().getTime() + 86400000)).catch((err) => {
+                    Log.error("An error occurred while attempting to set a Minify cache.", {err, properties: {key}});
+                });
+            },
             prefix: process.env.REDIS_PREFIX
         } : void 0,
-        disable: !process.env.MINIFY_ENABLED
+        disableTagCombining: !process.env.MINIFY_ENABLED
     });
     app.get("/css", Minify.cssHandler);
     app.get("/js", Minify.jsHandler);

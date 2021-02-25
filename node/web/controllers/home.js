@@ -6,9 +6,11 @@
 
 const DiscordMarkdown = require("discord-markdown"),
 
+    Cache = require("node-redis").Cache,
     Common = require("../includes/common"),
     Discord = require("../../src/discord"),
     HomeView = require("../../public/views/home"),
+    Log = require("node-application-insights-logger"),
     Player = require("../../src/models/player"),
     RouterBase = require("hot-router").RouterBase;
 
@@ -57,17 +59,34 @@ class Home extends RouterBase {
     static async get(req, res) {
         const standings = await Player.getSeasonStandings();
 
+        /** @type {{displayName: string, createdTimestamp: Date, content: string}[]} */
         let news;
         try {
-            const discordNews = await /** @type {DiscordJs.TextChannel} */(Discord.findChannelByName("announcements")).messages.fetch({limit: 5}); // eslint-disable-line no-extra-parens
-
-            news = discordNews.map((m) => {
-                m.content = DiscordMarkdown.toHTML(m.content, {discordCallback: {user: (user) => `@${Discord.findGuildMemberById(user.id).displayName}`, channel: (channel) => `#${Discord.findChannelById(channel.id).name}`, role: (role) => `@${Discord.findRoleById(role.id).name}`, emoji: () => ""}});
-
-                return m;
-            });
+            news = await Cache.get(`${process.env.REDIS_PREFIX}:discord:news`);
         } catch (err) {
+            Log.error("There was an error while getting the cache for Discord news.", {err});
             news = [];
+        }
+
+        if (!news || news.length === 0) {
+            try {
+                const discordNews = await /** @type {DiscordJs.TextChannel} */(Discord.findChannelByName("announcements")).messages.fetch({limit: 5}); // eslint-disable-line no-extra-parens
+
+                news = discordNews.map((m) => ({
+                    displayName: m.member.displayName,
+                    createdTimestamp: new Date(m.createdTimestamp),
+                    content: DiscordMarkdown.toHTML(m.content, {discordCallback: {user: (user) => `@${Discord.findGuildMemberById(user.id).displayName}`, channel: (channel) => `#${Discord.findChannelById(channel.id).name}`, role: (role) => `@${Discord.findRoleById(role.id).name}`, emoji: () => ""}})
+                }));
+            } catch (err) {
+                Log.error("There was an error while retrieving the Discord news.", {err});
+                news = [];
+            }
+        }
+
+        if (news.length > 0) {
+            Cache.add(`${process.env.REDIS_PREFIX}:discord:news`, news, new Date(new Date().getTime() + 300000)).catch((err) => {
+                Log.error("There was an error while setting the cache for Discord news.", {err});
+            });
         }
 
         res.status(200).send(Common.page(

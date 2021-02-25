@@ -7,8 +7,9 @@
 
 const MongoDb = require("mongodb"),
 
-    Cache = require("../redis/cache"),
-    Db = require(".");
+    Cache = require("node-redis").Cache,
+    Db = require("."),
+    Log = require("node-application-insights-logger");
 
 //  ####           #       #
 //  #   #          #
@@ -302,7 +303,9 @@ class Rating {
 
         await bulkChallenge.execute();
 
-        await Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${season}`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:players`]);
+        Cache.invalidate([`${process.env.REDIS_PREFIX}:invalidate:standings:${season}`, `${process.env.REDIS_PREFIX}:invalidate:matches`, `${process.env.REDIS_PREFIX}:invalidate:players`]).catch((err) => {
+            Log.error("An error occurred while invalidating a cache when updating ratings for the season.", {err, properties: {season}});
+        });
     }
 }
 

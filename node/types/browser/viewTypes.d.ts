@@ -5,7 +5,11 @@ import PlayerTypes from "../node/playerTypes"
 declare namespace ViewTypes {
     type HomeViewParameters = {
         standings: PlayerTypes.SeasonStanding[]
-        news: DiscordJs.Message[]
+        news: {
+            displayName: string
+            createdTimestamp: Date
+            content: string
+        }[]
     }
 
     type IndexViewParameters = {
