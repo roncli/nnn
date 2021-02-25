@@ -71,7 +71,7 @@ process.on("unhandledRejection", (reason) => {
 
     // Correct IP from web server.
     app.use((req, res, next) => {
-        req.ip = (req.headers["x-forwarded-for"] ? req.headers["x-forwarded-for"].toString() : void 0) || req.ip;
+        req.ip = (req.headers["x-forwarded-for"] ? req.headers["x-forwarded-for"].toString() : void 0) || req.ip || (req.socket && req.socket.remoteAddress || void 0) || (req.connection && req.connection.remoteAddress || void 0);
         next();
     });
 
