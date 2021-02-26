@@ -58,7 +58,7 @@ process.on("unhandledRejection", (reason) => {
     Redis.eventEmitter.on("error", (err) => {
         Log.error(`Redis error: ${err.message}`, {err: err.err});
     });
-    Redis.Cache.flush();
+    await Cache.flush();
 
     // Setup express app.
     const app = express();
@@ -69,14 +69,11 @@ process.on("unhandledRejection", (reason) => {
     // Initialize middleware stack.
     app.use(compression());
 
-    // Correct IP from web server.
-    app.use((req, res, next) => {
-        req.ip = (req.headers["x-forwarded-for"] ? req.headers["x-forwarded-for"].toString() : void 0) || req.ip || (req.socket && req.socket.remoteAddress || void 0) || (req.connection && req.connection.remoteAddress || void 0);
-        next();
-    });
+    // Trust proxy to get correct IP from web server.
+    app.enable("trust proxy");
 
     // Setup public redirects.
-    app.use(express.static("public"));
+    app.use(/^(?!\/tsconfig\.json)/, express.static("public"));
 
     // Setup Discord redirect.
     app.get("/discord", (req, res) => {
@@ -119,6 +116,10 @@ process.on("unhandledRejection", (reason) => {
     } catch (err) {
         Log.critical("Could not set up routes.", {err});
     }
+
+    app.use((err, req, res, next) => {
+        router.error(err, req, res, next);
+    });
 
     // Startup web server.
     const port = process.env.PORT || 3030;
