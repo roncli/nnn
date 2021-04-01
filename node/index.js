@@ -10,7 +10,8 @@ const Cache = require("node-redis").Cache,
     tzdata = require("tzdata"),
     util = require("util"),
 
-    Discord = require("./src/discord");
+    Discord = require("./src/discord"),
+    Exception = require("./src/errors/exception");
 
 process.on("unhandledRejection", (reason) => {
     Log.error("Unhandled promise rejection caught.", {err: reason instanceof Error ? reason : new Error(util.inspect(reason))});
@@ -109,7 +110,11 @@ process.on("unhandledRejection", (reason) => {
     // Setup hot-router.
     const router = new HotRouter.Router();
     router.on("error", (data) => {
-        Log.error(data.message, {err: data.err, req: data.req});
+        if (data.err && data.err instanceof Exception) {
+            Log.error(data.message, {err: data.err.innerError, req: data.req});
+        } else {
+            Log.error(data.message, {err: data.err, req: data.req});
+        }
     });
     try {
         app.use("/", await router.getRouter(path.join(__dirname, "web"), {hot: false}));
