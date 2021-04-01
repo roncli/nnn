@@ -15,7 +15,6 @@ declare namespace ViewTypes {
     type IndexViewParameters = {
         head: string
         html: string
-        protocol: string
         host: string
         originalUrl: string
         year: number
