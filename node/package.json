@@ -27,7 +27,7 @@
         "mongodb": "3.6.5",
         "node-application-insights-logger": "roncli/node-application-insights-logger#v1.0.3",
         "node-minify": "roncli/node-minify#v1.0.1",
-        "node-redis": "roncli/node-redis#v0.1.0",
+        "node-redis": "roncli/node-redis#v0.1.1",
         "timezone-js": "0.4.13",
         "tzdata": "1.0.25"
     },
